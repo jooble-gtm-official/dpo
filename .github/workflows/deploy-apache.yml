@@ -18,6 +18,10 @@ jobs:
         with:
           version: 'latest'
 
+      - name: Check docker version
+        run: |
+          docker -v
+
       - name: Deploy Apache manifests
         run: |
           kubectl apply -f manifests/
