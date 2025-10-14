@@ -1,0 +1,19 @@
+name: Deploy Apache to k8s
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy Apache manifests
+        run: |
+          kubectl apply -f manifests/
+          kubectl get pods -n default -l app=apache
