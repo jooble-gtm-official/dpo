@@ -49,5 +49,5 @@ jobs:
         run: |
           IMAGE=${{ needs.build.outputs.image }}
           echo "Deploying image: $IMAGE"
-          kubectl set image deployment/apache-deployment apache=$IMAGE -n default || kubectl apply -f manifests/
-          kubectl rollout status deployment/apache-deployment -n default
+          kubectl set image deployment/apache-deployment apache=$IMAGE -n replit || kubectl apply -f manifests/
+          kubectl rollout status deployment/apache-deployment -n replit
