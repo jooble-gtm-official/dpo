@@ -16,14 +16,14 @@ jobs:
         run: echo "${{ secrets.HARBOR_PASS }}" | docker login -u robot\$jooble registry.jooble.com  --password-stdin
 
       - name: Build image
-        run: docker build -t registry.jooble.com/replit/apache_dpo:${{ github.run_id }} .
+        run: docker build -t registry.jooble.com/replit/apache-dpo:${{ github.run_id }} .
 
       - name: Push image
-        run: docker push registry.jooble.com/replit/apache_dpo:${{ github.run_id }}
+        run: docker push registry.jooble.com/replit/apache-dpo:${{ github.run_id }}
 
       - name: Export image metadata
         id: build_image
-        run: echo "image=registry.jooble.com/replit/apache_dpo:${{ github.run_id }}" >> $GITHUB_OUTPUT
+        run: echo "image=registry.jooble.com/replit/apache-dpo:${{ github.run_id }}" >> $GITHUB_OUTPUT
 
     outputs:
       image: ${{ steps.build_image.outputs.image }}
