@@ -1,12 +1,34 @@
-name: Deploy Apache to k8s
+name: Build and deploy Apache to k8s
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to container registry
+        run: echo "${{ secrets.HARBOR_PASS }}" | docker login -u robot\$jooble registry.jooble.com  --password-stdin
+
+      - name: Build image
+        run: docker build -t registry.jooble.com/replit/apache_dpo:${{ github.run_id }} .
+
+      - name: Push image
+        run: docker push registry.jooble.com/replit/apache_dpo:${{ github.run_id }}
+
+      - name: Export image metadata
+        id: build_image
+        run: echo "image=registry.jooble.com/replit/apache_dpo:${{ github.run_id }}" >> $GITHUB_OUTPUT
+
+        outputs:
+          image: ${{ steps.build_image.outputs.image }}
+
+
   deploy:
     runs-on: self-hosted
     steps:
@@ -24,5 +46,6 @@ jobs:
 
       - name: Deploy Apache manifests
         run: |
-          kubectl apply -f manifests/
-          kubectl get pods -n default -l app=apache
+          IMAGE=${{ needs.build.outputs.image }}
+          kubectl set image deployment/apache-deployment apache=$IMAGE -n default || kubectl apply -f manifests/
+          kubectl rollout status deployment/apache-deployment -n default
