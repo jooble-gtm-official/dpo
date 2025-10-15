@@ -23,6 +23,6 @@ roleRef:
   name: github-runner-clusterrole
 subjects:
   - kind: ServiceAccount
-    name: replit
+    name: default
     namespace: github-runner
 
